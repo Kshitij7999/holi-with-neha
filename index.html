@@ -1,0 +1,1105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Happy Holi Neha🌸</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Baloo+2:wght@400;700;800;900&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet" />
+
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- Anime.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <!-- canvas-confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto; -webkit-tap-highlight-color: transparent; }
+
+    /* ── Bright sunny background ── */
+    @media (hover: none) and (pointer: coarse) {
+      body { cursor: auto; }
+      #cur-dot, #cur-ring { display: none; }
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #fff8f0;
+      background-image:
+        radial-gradient(ellipse 70% 50% at 15% 10%, rgba(255,180,50,.45) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 45% at 85% 12%, rgba(255,80,160,.40) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 40% at 5%  80%, rgba(80,220,255,.35) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 40% at 92% 80%, rgba(160,80,255,.35) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 50% 55%, rgba(80,255,160,.28) 0%, transparent 65%);
+      cursor: none;
+    }
+
+    /* powder puffs – now light & pastel */
+    .powder-layer {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 38% 28% at 8%  18%, rgba(255,100,60,.22)  0%, transparent 70%),
+        radial-gradient(ellipse 32% 24% at 90% 14%, rgba(255,60,160,.20)  0%, transparent 70%),
+        radial-gradient(ellipse 40% 28% at 50% 90%, rgba(255,200,0,.22)   0%, transparent 70%),
+        radial-gradient(ellipse 30% 22% at 18% 78%, rgba(160,60,255,.18)  0%, transparent 70%),
+        radial-gradient(ellipse 32% 22% at 82% 76%, rgba(0,200,120,.18)   0%, transparent 70%);
+      animation: powderDrift 14s ease-in-out infinite alternate;
+    }
+    @keyframes powderDrift {
+      0%   { transform: scale(1)    rotate(0deg);  opacity: 1; }
+      50%  { transform: scale(1.05) rotate(.8deg); opacity: .88; }
+      100% { transform: scale(.97)  rotate(-.8deg); opacity: 1; }
+    }
+
+    /* custom cursor */
+    #cur-dot {
+      position: fixed; width: 12px; height: 12px;
+      background: #ff2d78; border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      box-shadow: 0 0 10px #ff2d78;
+    }
+    #cur-ring {
+      position: fixed; width: 36px; height: 36px;
+      border: 2px solid #ff8c00;
+      border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+    }
+
+    #splash-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 2;
+    }
+
+    /* blobs – pastel & soft */
+    .blob {
+      position: fixed; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; z-index: 0;
+    }
+    .blob-1 { width:380px;height:380px; background:rgba(255,120,170,.38); top:-60px;    left:-80px;  animation: blobMove1 9s  ease-in-out infinite; }
+    .blob-2 { width:320px;height:320px; background:rgba(80,200,255,.32);  top:-40px;    right:-60px; animation: blobMove2 11s ease-in-out infinite; }
+    .blob-3 { width:340px;height:340px; background:rgba(255,210,60,.35);  bottom:-70px; left:4%;     animation: blobMove3 10s ease-in-out infinite; }
+    .blob-4 { width:300px;height:300px; background:rgba(180,80,255,.30);  bottom:-60px; right:4%;    animation: blobMove2 13s ease-in-out infinite reverse; }
+    .blob-5 { width:260px;height:260px; background:rgba(60,230,140,.28);  top:38%;  left:40%;       animation: blobMove1 8s  ease-in-out infinite reverse; }
+    @keyframes blobMove1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(45px,-55px) scale(1.1)} }
+    @keyframes blobMove2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-50px,38px) scale(1.07)} }
+    @keyframes blobMove3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(38px,-38px) scale(1.09)} }
+
+    /* floating petals */
+    .petal {
+      position: fixed; pointer-events: none; z-index: 4;
+      user-select: none; will-change: transform, opacity;
+    }
+
+    /* ── main layout ── */
+    #app {
+      position: relative; z-index: 3;
+      width: 100vw;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      text-align: center;
+      padding: clamp(1rem, 5vw, 3rem) clamp(.75rem, 4vw, 2rem) clamp(1.5rem, 5vw, 3rem);
+      gap: 0;
+    }
+
+    /* top label */
+    .top-label {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(1rem, 4.5vw, 1.8rem);
+      font-weight: 800; letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #ff4500;
+      opacity: 0; margin-bottom: .4rem;
+      text-shadow:
+        0 2px 0 rgba(255,80,0,.18),
+        0 4px 18px rgba(255,100,0,.35);
+      -webkit-text-stroke: .5px rgba(200,60,0,.25);
+      line-height: 1.3;
+    }
+
+    /* ── BIG heading ── */
+    .holi-title {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(2.8rem, 11vw, 7.5rem);
+      line-height: 1.05;
+      letter-spacing: .01em;
+      background: linear-gradient(135deg,
+        #ff2d78 0%, #ff6a00 15%, #ffcd00 30%,
+        #00c853 46%, #00b0ff 62%, #d500f9 78%, #ff2d78 100%);
+      background-size: 300% 300%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: rainbowShift 4s linear infinite;
+      filter: drop-shadow(0 4px 0 rgba(0,0,0,.08)) drop-shadow(0 8px 30px rgba(255,80,120,.35));
+      opacity: 0;
+      paint-order: stroke fill;
+      margin-bottom: .25rem;
+    }
+    @keyframes rainbowShift {
+      0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
+    }
+    .letter { display: inline-block; will-change: transform; }
+
+    /* ── sub-header ── */
+    .sub-label {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(.95rem, 3.8vw, 1.5rem);
+      font-weight: 700;
+      letter-spacing: .08em;
+      color: transparent;
+      background: linear-gradient(90deg, #ff2d78, #ff8c00, #ffe000, #00c853, #00b0ff, #d500f9, #ff2d78);
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: rainbowShift 5s linear infinite;
+      opacity: 0;
+      margin-top: .15rem;
+      margin-bottom: .2rem;
+      text-shadow: none;
+      line-height: 1.3;
+    }
+
+    /* ── colour dots ── */
+    .color-dots {
+      display: flex; gap: clamp(.5rem, 2.5vw, .9rem); margin-top: .5rem;
+      justify-content: center; opacity: 0; flex-wrap: wrap;
+      padding: 0 .5rem;
+    }
+    .cdot {
+      width: clamp(26px, 6vw, 32px); height: clamp(26px, 6vw, 32px); border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid rgba(255,255,255,.7);
+      box-shadow: 0 3px 12px rgba(0,0,0,.18);
+      transition: transform .2s;
+      touch-action: manipulation;
+    }
+    .cdot:hover, .cdot:active { transform: scale(1.5); }
+
+    /* ── burst button ── */
+    .burst-btn {
+      margin-top: .6rem;
+      padding: clamp(.6rem, 2.5vw, .8rem) clamp(1.4rem, 6vw, 2.4rem);
+      border: none; border-radius: 100px;
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(.9rem, 3.5vw, 1.1rem); font-weight: 900; letter-spacing: .04em;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff2d78, #ff8c00, #ffcd00);
+      color: #fff;
+      box-shadow: 0 5px 22px rgba(255,80,0,.4);
+      opacity: 0; transition: transform .2s, box-shadow .2s;
+      animation: btnPulse 2.2s ease-in-out infinite;
+      touch-action: manipulation;
+    }
+    .burst-btn:hover, .burst-btn:active { transform: scale(1.08); box-shadow: 0 8px 32px rgba(255,180,0,.6); }
+    @keyframes btnPulse {
+      0%,100%{ box-shadow:0 5px 22px rgba(255,80,0,.4); }
+      50%    { box-shadow:0 5px 36px rgba(255,200,0,.7); }
+    }
+
+    /* ── spray words ── */
+    .spray-word {
+      position: fixed;
+      font-family: 'Baloo 2', cursive; font-weight: 900;
+      pointer-events: none; z-index: 10; white-space: nowrap;
+      will-change: transform, opacity;
+      text-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+
+    /* hint */
+    .hint {
+      font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(120,60,0,.45); margin-top: .4rem; margin-bottom: 1.5rem; opacity: 0;
+      font-weight: 700;
+    }
+
+    /* ════════════════════════════════
+       CURTAIN + CAROUSEL  (portrait-first)
+    ════════════════════════════════ */
+    .carousel-wrap {
+      position: relative;
+      /* portrait-friendly: tall on mobile, capped on desktop */
+      width: min(400px, 92vw);
+      /* 4:5 portrait aspect ratio */
+      aspect-ratio: 4 / 5;
+      margin: .6rem auto .3rem;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow:
+        0 10px 50px rgba(255,80,120,.28),
+        0 2px 0 rgba(255,255,255,.9) inset;
+      opacity: 0;
+      flex-shrink: 0;
+    }
+
+    /* ── Carousel slides ── */
+    .carousel {
+      width: 100%; height: 100%;
+      background: #1a0a14;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .carousel-track {
+      display: flex;
+      height: 100%;
+      transition: transform .5s cubic-bezier(.77,0,.18,1);
+      will-change: transform;
+    }
+    .carousel-slide {
+      flex-shrink: 0;
+      width: 100%; height: 100%;
+      position: relative;
+    }
+    .carousel-slide img {
+      width: 100%; height: 100%;
+      /* contain keeps full portrait photo visible without cropping */
+      object-fit: contain;
+      object-position: center;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+      background: #1a0a14;
+    }
+    /* prev / next arrows — larger tap targets on mobile */
+    .carousel-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      z-index: 6;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(6px);
+      border: none; border-radius: 50%;
+      width: clamp(38px, 9vw, 48px); height: clamp(38px, 9vw, 48px);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(1rem, 3vw, 1.3rem); cursor: pointer;
+      box-shadow: 0 3px 16px rgba(0,0,0,.25);
+      transition: background .2s, transform .15s;
+      color: #ff2d78;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .carousel-arrow:hover, .carousel-arrow:active { background: #fff; transform: translateY(-50%) scale(1.14); }
+    .carousel-arrow.prev { left: 10px; }
+    .carousel-arrow.next { right: 10px; }
+    /* dot indicators */
+    .carousel-dots {
+      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 6;
+    }
+    .carousel-dot {
+      width: clamp(9px, 2.5vw, 12px); height: clamp(9px, 2.5vw, 12px); border-radius: 50%;
+      background: rgba(255,255,255,.5);
+      border: 2px solid rgba(255,255,255,.75);
+      cursor: pointer;
+      transition: background .25s, transform .25s;
+      touch-action: manipulation;
+    }
+    .carousel-dot.active {
+      background: #ff2d78;
+      border-color: #fff;
+      transform: scale(1.35);
+    }
+    /* caption strip at bottom */
+    .carousel-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 52px;
+      background: linear-gradient(to top, rgba(0,0,0,.45), transparent);
+      pointer-events: none; z-index: 5;
+      border-radius: 0 0 24px 24px;
+    }
+
+    /* Curtain: two halves that slide apart */
+    .curtain {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; pointer-events: auto;
+      border-radius: 24px; overflow: hidden;
+    }
+    .curtain-half {
+      flex: 1; height: 100%;
+      display: flex; align-items: stretch;
+      transition: transform .9s cubic-bezier(.77,0,.18,1);
+      will-change: transform;
+    }
+    .curtain-half.left  { transform-origin: left center; }
+    .curtain-half.right { transform-origin: right center; }
+    .curtain-panel {
+      flex: 1;
+      background: repeating-linear-gradient(
+        180deg,
+        #ff6ec7 0px, #ff2d78 30px,
+        #ff8c00 30px, #ffcd00 60px,
+        #00c853 60px, #00b0ff 90px,
+        #a259ff 90px, #ff6ec7 120px
+      );
+      background-size: 100% 120px;
+      position: relative;
+    }
+    /* fabric folds */
+    .curtain-panel::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(0,0,0,.07) 0px, transparent 8px,
+        transparent 24px, rgba(0,0,0,.05) 32px
+      );
+    }
+    /* gold fringe at bottom */
+    .curtain-panel::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 18px;
+      background: repeating-linear-gradient(
+        90deg,
+        #ffcd00 0px, #ffcd00 6px,
+        transparent 6px, transparent 10px
+      );
+      filter: drop-shadow(0 2px 4px rgba(200,100,0,.4));
+    }
+    /* decorative flower row on curtain */
+    .curtain-flowers {
+      position: absolute; top: 6px; left: 0; right: 0;
+      display: flex; justify-content: space-evenly;
+      font-size: 1.3rem; pointer-events: none; z-index: 1;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.2));
+    }
+
+    /* reveal state */
+    .curtain.open .curtain-half.left  { transform: translateX(-100%); }
+    .curtain.open .curtain-half.right { transform: translateX(100%); }
+
+    /* centre reveal button on curtain */
+    .curtain-btn {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      background: #fff;
+      border: 3px solid #ffcd00;
+      border-radius: 50px;
+      padding: clamp(.5rem, 2vw, .7rem) clamp(1rem, 5vw, 1.6rem);
+      font-family: 'Nunito', sans-serif;
+      font-size: clamp(.85rem, 3.5vw, 1rem); font-weight: 900;
+      color: #ff2d78;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255,80,120,.35);
+      white-space: nowrap;
+      transition: transform .2s, box-shadow .2s;
+      animation: btnPulse 2s ease-in-out infinite;
+      display: flex; align-items: center; gap: .4rem;
+      touch-action: manipulation;
+    }
+    .curtain-btn:hover, .curtain-btn:active { transform: translate(-50%,-50%) scale(1.1); box-shadow: 0 6px 28px rgba(255,180,0,.55); }
+    .curtain-btn.hidden { opacity:0; pointer-events:none; transition: opacity .3s; }
+
+    /* hint */
+    .hint {
+      font-size: clamp(.6rem, 2.5vw, .75rem); letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(120,60,0,.45); margin-top: .4rem; margin-bottom: .6rem; opacity: 0;
+      font-weight: 700;
+    }
+
+    /* ── dedicated mobile breakpoint ── */
+    @media (max-width: 480px) {
+      .holi-title { font-size: clamp(2.4rem, 12vw, 3.8rem); }
+      .carousel-wrap { width: 92vw; }
+      .carousel-arrow.prev { left: 6px; }
+      .carousel-arrow.next { right: 6px; }
+      .blob-1,.blob-2,.blob-3,.blob-4,.blob-5 { opacity: .55; }
+    }
+
+    /* ── petal shower canvas (full viewport, above everything) ── */
+    #petal-shower-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 50;
+    }
+
+    /* ── colour-splash canvas (sits inside carousel-wrap, above photos, below curtain) ── */
+    #water-canvas {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 7;
+      border-radius: 24px;
+    }
+
+    /* colour-gun piston icon that fires on swipe */
+    .water-gun-icon {
+      position: absolute;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      pointer-events: none; z-index: 8;
+      will-change: transform, opacity;
+      filter: drop-shadow(0 2px 6px rgba(255,80,0,.5));
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div class="blob blob-4"></div>
+<div class="blob blob-5"></div>
+<div class="powder-layer"></div>
+<canvas id="splash-canvas"></canvas>
+<canvas id="petal-shower-canvas"></canvas>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<audio id="holi-audio" src="track/aud-lofi.mp3" preload="auto"></audio>
+<audio id="holi-audio-2" src="track/aud.mp3" preload="auto"></audio>
+
+<div id="app">
+  <span
+    v-for="p in petals" :key="p.id"
+    class="petal" :id="'petal-' + p.id"
+    :style="{ left: p.x + 'vw', top: p.y + 'vh', fontSize: p.size + 'rem' }"
+  >{{ p.emoji }}</span>
+
+  <span
+    v-for="w in sprayWords" :key="w.id"
+    class="spray-word" :id="'sw-' + w.id"
+    :style="{ left: w.x + 'px', top: w.y + 'px', color: w.color, fontSize: w.fs + 'rem' }"
+  >{{ w.text }}</span>
+
+  <p class="top-label" id="top-label">🎨 Happy Holi Neha 🌸</p>
+
+  <h1 class="holi-title" id="holi-title">
+    <span v-for="(ch, i) in titleChars" :key="i" class="letter" :id="'ltr-' + i">{{ ch }}</span>
+  </h1>
+
+  <p class="sub-label" id="sub-label">✨ Holi Ke Rang, Neha Ke Sang ✨</p>
+
+  <!-- carousel with curtain -->
+  <div class="carousel-wrap" id="carousel-wrap">
+    <!-- image carousel -->
+    <div class="carousel"
+      @mousedown="swipeStart" @touchstart.passive="swipeStart"
+      @mouseup="swipeEnd"     @touchend.passive="swipeEnd"
+      @mouseleave="swipeCancel" @touchcancel.passive="swipeCancel"
+      style="touch-action: pan-y;">
+
+      <div class="carousel-track" :style="{ transform: 'translateX(-' + activeSlide * 100 + '%)' }">
+        <div class="carousel-slide" v-for="(img, i) in carouselImages" :key="i">
+          <img :src="img.src" :alt="img.alt" draggable="false" loading="lazy" />
+        </div>
+      </div>
+
+      <!-- soft gradient caption strip -->
+      <div class="carousel-caption"></div>
+
+      <!-- water-gun canvas overlay -->
+      <canvas id="water-canvas"></canvas>
+      <!-- colour-piston sprite (animated on swipe) -->
+      <div class="water-gun-icon" id="wgun" style="display:none;">🎚️</div>
+
+      <!-- arrows -->
+      <button class="carousel-arrow prev" @click.stop="prevSlide" aria-label="Previous">&#8592;</button>
+      <button class="carousel-arrow next" @click.stop="nextSlide" aria-label="Next">&#8594;</button>
+
+      <!-- dot indicators -->
+      <div class="carousel-dots">
+        <div class="carousel-dot"
+          v-for="(img, i) in carouselImages" :key="i"
+          :class="{ active: i === activeSlide }"
+          @click.stop="goToSlide(i)"
+          :aria-label="'Go to slide ' + (i+1)">
+        </div>
+      </div>
+    </div>
+
+    <!-- curtain overlay -->
+    <div class="curtain" id="curtain" :class="{ open: curtainOpen }">
+      <div class="curtain-half left">
+        <div class="curtain-panel">
+          <div class="curtain-flowers">🌺 🌼 🌸 🌻</div>
+        </div>
+      </div>
+      <div class="curtain-half right">
+        <div class="curtain-panel">
+          <div class="curtain-flowers">🌻 🌸 🌼 🌺</div>
+        </div>
+      </div>
+      <!-- reveal button sits on top of both halves -->
+      <button class="curtain-btn" :class="{ hidden: curtainOpen }" @click.stop="openCurtain">
+        Dekho toh parde ke pichhe kya hai!
+      </button>
+    </div>
+  </div>
+
+  <div class="color-dots" id="cdots">
+    <div class="cdot" v-for="c in dotColors" :key="c"
+      :style="{ background: c, color: c }"
+      @click="splashBurst(c)">
+    </div>
+  </div>
+
+  <button class="burst-btn" id="burst-btn" @click="bigBurst">🎨 Holi Hai!</button>
+
+  <p class="hint" id="hint"> 🦋🌈 Radhe Radhe 🦚✨ </p>
+</div>
+
+<script>
+const { createApp, ref, onMounted } = Vue;
+
+createApp({
+  setup() {
+    const titleChars = [...'Happy Holi'];
+
+    /* ── Carousel ── */
+    const carouselImages = [
+      { src: 'images/1772027193926.png',                          alt: 'Holi 1' },
+      { src: 'images/1772027193926~2.png',                        alt: 'Holi 2' },
+      { src: 'images/60318f56-78eb-48b2-a19a-77d9add6ab7b.PNG',   alt: 'Holi 3' },
+      { src: 'images/kshitij.jpg',                                alt: 'Holi 4' },
+    ];
+    const activeSlide = ref(0);
+    let autoplayTimer = null;
+
+    function nextSlide()     { waterGunBlast('left');  activeSlide.value = (activeSlide.value + 1) % carouselImages.length; resetAutoplay(); }
+    function prevSlide()     { waterGunBlast('right'); activeSlide.value = (activeSlide.value - 1 + carouselImages.length) % carouselImages.length; resetAutoplay(); }
+    function goToSlide(i)    { waterGunBlast(i > activeSlide.value ? 'left' : 'right'); activeSlide.value = i; resetAutoplay(); }
+    function startAutoplay() { autoplayTimer = setInterval(()=>{ activeSlide.value = (activeSlide.value + 1) % carouselImages.length; }, 3200); }
+    function resetAutoplay() { clearInterval(autoplayTimer); startAutoplay(); }
+
+    /* swipe support */
+    let swipeX = null, swipeY = null;
+    function swipeStart(e) {
+      const t = e.touches ? e.touches[0] : e;
+      swipeX = t.clientX; swipeY = t.clientY;
+    }
+    function swipeEnd(e) {
+      if (swipeX === null) return;
+      const t = e.changedTouches ? e.changedTouches[0] : e;
+      const dx = t.clientX - swipeX;
+      const dy = t.clientY - swipeY;
+      // only register as horizontal swipe if mostly horizontal
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3)
+        dx < 0 ? nextSlide() : prevSlide();
+      swipeX = swipeY = null;
+    }
+    function swipeCancel() { swipeX = swipeY = null; }
+
+    const dotColors = ['#ff2d78','#ff8c00','#ffe000','#00e676','#00cfff','#a259ff','#ff6ec7'];
+
+    const petalEmojis = ['🌸','🌺','🌼','🎊','✨','🌈','💛','💜','💚','💙','❤️','🟡','🟠','🟣','🟢','🔵','🔴', '🦚'];
+    const petals = ref([]);
+    const sprayWords = ref([]);
+    let sprayId = 0;
+
+    function buildPetals() {
+      petals.value = Array.from({ length: 30 }, (_, i) => ({
+        id: i,
+        emoji: petalEmojis[i % petalEmojis.length],
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: .8 + Math.random() * 1.4,
+      }));
+    }
+
+    const holiWords = ['Happy Holi Neha!','Yeh lo Gulal!','Aur lo','🎨','✨','❤️‍🔥','रंग','होली','Love!','Colour!','Play!','Bura na mano! Holi hai'];
+    const wordColors = ['#ff2d78','#ff8c00','#ffe000','#00e676','#00cfff','#a259ff','#ff6ec7','#ff4444','#00ffcc'];
+
+    function spawnWord(x, y) {
+      const id = ++sprayId;
+      sprayWords.value.push({
+        id, text: holiWords[Math.floor(Math.random() * holiWords.length)],
+        color: wordColors[Math.floor(Math.random() * wordColors.length)],
+        x, y, fs: .8 + Math.random() * 1.6,
+      });
+      requestAnimationFrame(() => {
+        const el = document.getElementById('sw-' + id);
+        if (!el) return;
+        anime({
+          targets: el,
+          translateX: (Math.random()-.5)*220,
+          translateY: -(60 + Math.random()*150),
+          opacity: [1, 0],
+          scale: [.5, 1.4, .9],
+          rotate: [(Math.random()-.5)*35],
+          duration: 1100 + Math.random()*600,
+          easing: 'easeOutExpo',
+          complete: () => { sprayWords.value = sprayWords.value.filter(w => w.id !== id); },
+        });
+      });
+    }
+
+    /* ══════════════════════════════════════════════════
+       PETAL SHOWER  — rains emoji petals + colour blobs
+       from the top of the viewport when curtain opens
+    ══════════════════════════════════════════════════ */
+    let psCanvas, psCtx;
+    const PS_EMOJIS = ['🌸','🌺','🌼','🌻','🎊','🎉','💛','💜','💚','💙','❤️','✨','🌈','🟡','🟠','🟣','🟢','🔵','🔴'];
+    const PS_COLORS = ['#ff2d78','#ff8c00','#ffe000','#00e676','#00cfff','#a259ff','#ff6ec7','#ff4444','#00ffcc'];
+    let psParticles = [];
+    let psRafId = null;
+
+    function initPetalShower() {
+      psCanvas = document.getElementById('petal-shower-canvas');
+      psCtx    = psCanvas.getContext('2d');
+      psCanvas.width  = window.innerWidth;
+      psCanvas.height = window.innerHeight;
+      window.addEventListener('resize', ()=>{
+        psCanvas.width  = window.innerWidth;
+        psCanvas.height = window.innerHeight;
+      });
+    }
+
+    function petalShower() {
+      // spawn a big wave of particles
+      psCanvas.width = window.innerWidth;
+      psCanvas.height = window.innerHeight;
+      psParticles = [];
+      const count = Math.min(120, 60 + Math.floor(window.innerWidth / 8));
+      for (let i = 0; i < count; i++) {
+        const isEmoji = Math.random() < .55;
+        psParticles.push({
+          x: Math.random() * window.innerWidth,
+          y: -20 - Math.random() * 200,           // start above viewport
+          vx: (Math.random() - .5) * 3.5,
+          vy: 1.8 + Math.random() * 4,
+          rot: Math.random() * 360,
+          rotV: (Math.random() - .5) * 8,
+          size: isEmoji ? (14 + Math.random() * 22) : (6 + Math.random() * 14),
+          isEmoji,
+          emoji: PS_EMOJIS[Math.floor(Math.random() * PS_EMOJIS.length)],
+          color: PS_COLORS[Math.floor(Math.random() * PS_COLORS.length)],
+          alpha: 1,
+          wobble: Math.random() * Math.PI * 2,
+          wobbleSpeed: .04 + Math.random() * .06,
+          life: 1,
+          decay: .003 + Math.random() * .005,
+        });
+      }
+      if (psRafId) cancelAnimationFrame(psRafId);
+      animatePetalShower();
+    }
+
+    function animatePetalShower() {
+      psCtx.clearRect(0, 0, psCanvas.width, psCanvas.height);
+      psParticles = psParticles.filter(p => p.life > 0 && p.y < psCanvas.height + 60);
+      if (psParticles.length === 0) { psRafId = null; return; }
+
+      psParticles.forEach(p => {
+        p.wobble += p.wobbleSpeed;
+        p.x  += p.vx + Math.sin(p.wobble) * 1.2;
+        p.y  += p.vy;
+        p.rot += p.rotV;
+        p.vy += .06;  // gentle gravity
+        p.life -= p.decay;
+        p.alpha = Math.max(0, p.life);
+
+        psCtx.save();
+        psCtx.globalAlpha = p.alpha;
+        psCtx.translate(p.x, p.y);
+        psCtx.rotate(p.rot * Math.PI / 180);
+
+        if (p.isEmoji) {
+          psCtx.font = `${p.size}px serif`;
+          psCtx.textAlign = 'center';
+          psCtx.textBaseline = 'middle';
+          psCtx.fillText(p.emoji, 0, 0);
+        } else {
+          // colour powder blob — irregular teardrop
+          psCtx.beginPath();
+          psCtx.ellipse(0, 0, p.size * .65, p.size, 0, 0, Math.PI * 2);
+          psCtx.fillStyle = p.color;
+          psCtx.fill();
+        }
+        psCtx.restore();
+      });
+
+      psRafId = requestAnimationFrame(animatePetalShower);
+    }
+
+    /* ══════════════════════════════════════════════════
+       HOLI COLOUR BLAST  — vibrant gulal jet + paint droplets
+       fired across the carousel whenever slides change
+    ══════════════════════════════════════════════════ */
+    let wCanvas, wCtx;
+    const W_COLORS = ['#ff2d78','#ff8c00','#ffe000','#00e676','#00cfff','#a259ff','#ff6ec7','#ff4444','#00ffcc','#ff1744','#d500f9','#ffab00'];
+    let wParticles = [];
+    let wRafId = null;
+
+    function initWaterCanvas() {
+      wCanvas = document.getElementById('water-canvas');
+      if (!wCanvas) return;
+      wCtx = wCanvas.getContext('2d');
+      const wrap = document.getElementById('carousel-wrap');
+      const resizeW = () => {
+        const r = wrap.getBoundingClientRect();
+        wCanvas.width  = r.width;
+        wCanvas.height = r.height;
+      };
+      resizeW();
+      window.addEventListener('resize', resizeW);
+    }
+
+    function waterGunBlast(direction /* 'left'|'right' */) {
+      if (!wCtx) return;
+      wCanvas.width  = wCanvas.width; // clear
+      wParticles = [];
+
+      const W = wCanvas.width, H = wCanvas.height;
+      const fromRight = direction === 'left';   // swipe left → blast fires from right
+      const ox = fromRight ? W + 10 : -10;
+      const oy = H * (.3 + Math.random() * .4);
+      const jetAngle = fromRight ? Math.PI : 0;
+
+      // pick a dominant Holi colour for this blast, plus accent colours
+      const dominant = W_COLORS[Math.floor(Math.random() * W_COLORS.length)];
+      const accent   = () => W_COLORS[Math.floor(Math.random() * W_COLORS.length)];
+
+      // ─ main gulal jet — fat rounded blobs in dominant colour
+      for (let i = 0; i < 55; i++) {
+        const speed  = 16 + Math.random() * 20;
+        const spread = (Math.random() - .5) * .32;
+        const angle  = jetAngle + spread;
+        wParticles.push({
+          x: ox, y: oy + (Math.random() - .5) * 40,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed + (Math.random() - .5) * 2.5,
+          r: 4 + Math.random() * 9,           // bigger blobs
+          color: Math.random() < .7 ? dominant : accent(),
+          alpha: .92 + Math.random() * .08,
+          life: 1,
+          decay: .016 + Math.random() * .02,
+          type: 'jet',
+        });
+      }
+
+      // ─ powder mist — multi-colour soft puffs
+      for (let i = 0; i < 55; i++) {
+        const speed  = 7 + Math.random() * 13;
+        const spread = (Math.random() - .5) * 1.1;
+        const angle  = jetAngle + spread;
+        wParticles.push({
+          x: ox, y: oy + (Math.random() - .5) * 70,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed + (Math.random() - .5) * 4,
+          r: 3 + Math.random() * 10,
+          color: accent(),
+          alpha: .45 + Math.random() * .45,
+          life: 1,
+          decay: .022 + Math.random() * .024,
+          type: 'mist',
+        });
+      }
+
+      // ─ paint-splat impact burst — droplets radiate from the hit wall
+      const hitX = fromRight ? W * .12 : W * .88;
+      for (let i = 0; i < 55; i++) {
+        const a   = Math.random() * Math.PI * 2;
+        const spd = 4 + Math.random() * 11;
+        wParticles.push({
+          x: hitX, y: oy + (Math.random() - .5) * 90,
+          vx: Math.cos(a) * spd,
+          vy: Math.sin(a) * spd - 4,
+          r: 2.5 + Math.random() * 7,
+          color: accent(),
+          alpha: .8 + Math.random() * .2,
+          life: 1,
+          decay: .024 + Math.random() * .026,
+          type: 'drop',
+          delay: 7 + Math.floor(Math.random() * 12),
+        });
+      }
+
+      // animate the gun icon
+      const gun = document.getElementById('wgun');
+      if (gun) {
+        gun.style.display = 'block';
+        gun.style.top     = (oy - 20) + 'px';
+        gun.style.left    = fromRight ? (W - 50) + 'px' : '5px';
+        gun.style.transform = fromRight ? 'scaleX(-1)' : 'scaleX(1)';
+        anime({
+          targets: gun,
+          translateX: fromRight ? [-10, -30, 0] : [10, 30, 0],
+          translateY: [0, -8, 0],
+          rotate:     fromRight ? [0, -8, 0] : [0, 8, 0],
+          opacity:    [1, 1, 0],
+          duration: 700,
+          easing: 'easeOutExpo',
+          complete: () => { gun.style.display = 'none'; gun.style.opacity = 1; },
+        });
+      }
+
+      if (wRafId) cancelAnimationFrame(wRafId);
+      let frame = 0;
+      animateWater(frame);
+    }
+
+    function animateWater(frame) {
+      wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
+      frame++;
+      // fade old frames
+      wCtx.globalCompositeOperation = 'destination-out';
+      wCtx.fillStyle = 'rgba(0,0,0,0.04)';
+      wCtx.fillRect(0,0,wCanvas.width,wCanvas.height);
+      wCtx.globalCompositeOperation = 'source-over';
+
+      let alive = false;
+      wParticles.forEach(p => {
+        if (p.delay && frame < p.delay) { alive = true; return; }
+        p.vy += .35;  // gravity
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.life -= p.decay;
+        p.alpha = Math.max(0, p.life);
+        if (p.life <= 0) return;
+        alive = true;
+
+        wCtx.save();
+        wCtx.globalAlpha = p.alpha;
+        if (p.type === 'jet') {
+          // fat rounded gulal blob — travels in direction of motion
+          const angle = Math.atan2(p.vy, p.vx);
+          wCtx.translate(p.x, p.y);
+          wCtx.rotate(angle);
+          const grad = wCtx.createRadialGradient(0, 0, 0, 0, 0, p.r * 2);
+          grad.addColorStop(0,  p.color + 'ff');
+          grad.addColorStop(.5, p.color + 'cc');
+          grad.addColorStop(1,  p.color + '00');
+          wCtx.beginPath();
+          wCtx.ellipse(0, 0, p.r * 2.2, p.r * 1.1, 0, 0, Math.PI * 2);
+          wCtx.fillStyle = grad;
+          wCtx.fill();
+        } else if (p.type === 'mist') {
+          // soft powder puff — large blurry circle
+          const grad = wCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.2);
+          grad.addColorStop(0,   p.color + 'bb');
+          grad.addColorStop(.55, p.color + '66');
+          grad.addColorStop(1,   p.color + '00');
+          wCtx.beginPath();
+          wCtx.arc(p.x, p.y, p.r * 2.2, 0, Math.PI * 2);
+          wCtx.fillStyle = grad;
+          wCtx.fill();
+        } else {
+          // paint-splat droplet — opaque centre, feathered edge
+          const grad = wCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 1.8);
+          grad.addColorStop(0,   p.color + 'ff');
+          grad.addColorStop(.45, p.color + 'dd');
+          grad.addColorStop(1,   p.color + '00');
+          wCtx.beginPath();
+          wCtx.arc(p.x, p.y, p.r * 1.8, 0, Math.PI * 2);
+          wCtx.fillStyle = grad;
+          wCtx.fill();
+        }
+        wCtx.restore();
+      });
+
+      if (alive) {
+        wRafId = requestAnimationFrame(() => animateWater(frame));
+      } else {
+        // gentle final fade
+        let fade = 1;
+        (function fadeOut() {
+          wCtx.globalCompositeOperation = 'destination-out';
+          wCtx.fillStyle = 'rgba(0,0,0,0.08)';
+          wCtx.fillRect(0,0,wCanvas.width,wCanvas.height);
+          wCtx.globalCompositeOperation = 'source-over';
+          fade -= .08;
+          if (fade > 0) requestAnimationFrame(fadeOut);
+          else wCtx.clearRect(0,0,wCanvas.width,wCanvas.height);
+        })();
+        wRafId = null;
+      }
+    }
+
+    let canvas, ctx;
+    function initCanvas() {
+      canvas = document.getElementById('splash-canvas');
+      ctx = canvas.getContext('2d');
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      startCanvasFadeLoop();
+    }
+    function resizeCanvas() {
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    }
+
+    // Continuously and gently erase old splashes — using globalAlpha trick so
+    // we never fill with black. We draw the canvas onto itself with slight fade.
+    function startCanvasFadeLoop() {
+      (function loop() {
+        // Save pixels, reduce opacity across entire canvas
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0,0,0,0.008)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-over';
+        requestAnimationFrame(loop);
+      })();
+    }
+
+    function paintSplash(x, y, color) {
+      const r = 16 + Math.random()*36;
+      const g = ctx.createRadialGradient(x,y,0,x,y,r);
+      g.addColorStop(0, color+'cc'); g.addColorStop(1, color+'00');
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle = g; ctx.fill();
+      for (let i=0;i<8;i++) {
+        const a=Math.random()*Math.PI*2, d=4+Math.random()*r*.95, sr=2+Math.random()*10;
+        ctx.beginPath();
+        ctx.arc(x+Math.cos(a)*d, y+Math.sin(a)*d, sr, 0, Math.PI*2);
+        ctx.fillStyle = color+'88'; ctx.fill();
+      }
+    }
+
+    function confettiPop(ox, oy, color) {
+      confetti({ particleCount:65, spread:100, angle:80, origin:{x:ox,y:oy}, colors:[color,'#ffffff','#ffe000'], scalar:1.1 });
+    }
+
+    function fullConfetti() {
+      const holiC = ['#ff2d78','#ff8c00','#ffe000','#00e676','#00cfff','#a259ff','#ff6ec7'];
+      const end = Date.now()+2400;
+      (function frame(){
+        confetti({particleCount:8, angle:60,  spread:55, origin:{x:0,  y:.6}, colors:holiC});
+        confetti({particleCount:8, angle:120, spread:55, origin:{x:1,  y:.6}, colors:holiC});
+        confetti({particleCount:5, angle:90,  spread:70, origin:{x:.5, y:.2}, colors:holiC});
+        if(Date.now()<end) requestAnimationFrame(frame);
+      })();
+    }
+
+    function splashBurst(color) {
+      const x = window.innerWidth*(.2+Math.random()*.6);
+      const y = window.innerHeight*(.2+Math.random()*.6);
+      for(let i=0;i<6;i++) setTimeout(()=>paintSplash(x+(Math.random()-.5)*90,y+(Math.random()-.5)*90,color),i*55);
+      spawnWord(x, y-30);
+      confettiPop(x/window.innerWidth, y/window.innerHeight, color);
+    }
+
+    function bigBurst() {
+      for(let i=0;i<24;i++) setTimeout(()=>{
+        const x=Math.random()*window.innerWidth, y=Math.random()*window.innerHeight;
+        paintSplash(x,y,dotColors[Math.floor(Math.random()*dotColors.length)]);
+      }, i*50);
+      const cx=window.innerWidth/2, cy=window.innerHeight/2;
+      for(let i=0;i<14;i++) setTimeout(()=>spawnWord(cx+(Math.random()-.5)*440,cy+(Math.random()-.5)*260),i*75);
+      fullConfetti();
+      jiggleTitleLetters();
+    }
+
+    function jiggleTitleLetters() {
+      titleChars.forEach((_,i)=>{
+        const el=document.getElementById('ltr-'+i); if(!el) return;
+        anime({ targets:el, translateY:[0,-(28+Math.random()*22),0], rotate:[0,(Math.random()-.5)*25,0], scale:[1,1.4,1],
+          duration:700+Math.random()*300, delay:i*55, easing:'spring(1,80,10,0)' });
+      });
+    }
+
+    function animatePetals() {
+      petals.value.forEach((p,i)=>{
+        const el=document.getElementById('petal-'+p.id); if(!el) return;
+        anime({ targets:el,
+          translateY:[{value:-(18+Math.random()*24),duration:1800+Math.random()*1200},{value:0,duration:1800+Math.random()*1200}],
+          translateX:[{value:(Math.random()-.5)*32,duration:2200+Math.random()*1000},{value:0,duration:2200+Math.random()*1000}],
+          rotate:{value:'+=360', duration:8000+Math.random()*8000, easing:'linear'},
+          opacity:[.25,.85,.25],
+          loop:true, delay:Math.random()*3000, easing:'easeInOutSine', direction:'alternate',
+        });
+      });
+    }
+
+    function startLetterFloat() {
+      titleChars.forEach((_,i)=>{
+        const el=document.getElementById('ltr-'+i); if(!el) return;
+        anime({ targets:el,
+          translateY:[(Math.random()-.5)*8,-(8+Math.random()*14),(Math.random()-.5)*7],
+          rotate:[(Math.random()-.5)*4,(Math.random()-.5)*7,0],
+          loop:true, duration:2200+Math.random()*1600, delay:i*90, easing:'easeInOutSine', direction:'alternate',
+        });
+      });
+    }
+
+    function entranceAnims() {
+      const tl = gsap.timeline({ defaults:{ease:'back.out(1.6)'} });
+      gsap.set('#sub-label', { y: 18, opacity: 0 });
+      tl.to('#top-label', { opacity:1, y:0, duration:.6, from:{y:-20} });
+      tl.fromTo('.letter',
+        { opacity:0, y:90, rotation:i=>(i%2===0?-22:22), scale:.3 },
+        { opacity:1, y:0, rotation:0, scale:1, stagger:.07, duration:.75, ease:'back.out(2.2)' },
+        '-=.2'
+      );
+      tl.to('#sub-label', { opacity:1, y:0, duration:.55, ease:'back.out(1.8)' }, '-=.1');
+      gsap.set('#carousel-wrap', { y: 30, opacity: 0 });
+      tl.fromTo('#cdots .cdot', {opacity:0,scale:0}, {opacity:1,scale:1,stagger:.07,duration:.4,ease:'back.out(2)'}, '-=.15');
+      tl.to('#carousel-wrap', { opacity:1, y:0, duration:.6, ease:'back.out(1.4)' }, '-=.2');
+      tl.to('#burst-btn',   { opacity:1, duration:.5 }, '-=.1');
+      tl.to('#hint',        { opacity:1, duration:.5 }, '-=.1');
+      tl.call(()=>{ startLetterFloat(); animatePetals(); });
+    }
+
+    function initCursor() {
+      // skip on pure touch devices
+      if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+      const dot=document.getElementById('cur-dot'), ring=document.getElementById('cur-ring');
+      let mx=0,my=0,rx=0,ry=0;
+      window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+      (function loop(){ rx+=(mx-rx)*.14; ry+=(my-ry)*.14;
+        dot.style.left=mx+'px'; dot.style.top=my+'px';
+        ring.style.left=rx+'px'; ring.style.top=ry+'px';
+        requestAnimationFrame(loop); })();
+    }
+
+    function initClickSplash() {
+      window.addEventListener('click',e=>{
+        if(e.target.closest('button')||e.target.closest('.cdot')) return;
+        const color=dotColors[Math.floor(Math.random()*dotColors.length)];
+        for(let i=0;i<3;i++) setTimeout(()=>paintSplash(e.clientX+(Math.random()-.5)*45,e.clientY+(Math.random()-.5)*45,color),i*40);
+        spawnWord(e.clientX, e.clientY-10);
+        confettiPop(e.clientX/window.innerWidth, e.clientY/window.innerHeight, color);
+      });
+    }
+
+    /* ══════════════════════════════════════════════════
+       HOLI AUDIO  — plays track/aud-lofi.mp3 on curtain pull,
+       then track/aud.mp3 immediately after it finishes.
+       Both files live in the track/ folder next to index.html.
+    ══════════════════════════════════════════════════ */
+    function playHoliFanfare() {
+      const a1 = document.getElementById('holi-audio');
+      const a2 = document.getElementById('holi-audio-2');
+      if (!a1) return;
+      // reset & play first track
+      a1.currentTime = 0;
+      a1.volume = 0.85;
+      a1.play().catch(() => {});
+      // when first track ends, play second track
+      a1.onended = () => {
+        if (!a2) return;
+        a2.currentTime = 0;
+        a2.volume = 0.85;
+        a2.play().catch(() => {});
+      };
+    }
+
+    /* ── curtain ── */
+    const curtainOpen = ref(false);
+    function openCurtain() {
+      curtainOpen.value = true;
+      playHoliFanfare();
+      setTimeout(()=>fullConfetti(), 200);
+      setTimeout(()=>jiggleTitleLetters(), 300);
+      // shower of petals and colour blobs from above
+      setTimeout(()=>petalShower(), 100);
+      setTimeout(()=>petalShower(), 1100);  // second wave
+    }
+
+    onMounted(()=>{
+      buildPetals(); initCanvas(); initCursor(); initClickSplash();
+      initPetalShower(); initWaterCanvas();
+      setTimeout(()=>{ entranceAnims(); setTimeout(fullConfetti,1600); }, 80);
+      startAutoplay();
+    });
+
+    return { titleChars, dotColors, petals, sprayWords, splashBurst, bigBurst, curtainOpen, openCurtain,
+             carouselImages, activeSlide, nextSlide, prevSlide, goToSlide, swipeStart, swipeEnd, swipeCancel };
+  },
+}).mount('#app');
+</script>
+</body>
+</html>
